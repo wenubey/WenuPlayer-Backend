@@ -37,4 +37,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-async:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongoVersion")
+
+    // SLF4J
+    implementation("org.slf4j:slf4j-api:2.0.0")
 }

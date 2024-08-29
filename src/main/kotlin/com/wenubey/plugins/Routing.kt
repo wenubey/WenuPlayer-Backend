@@ -1,4 +1,4 @@
-package com.example.plugins
+package com.wenubey.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.response.*
