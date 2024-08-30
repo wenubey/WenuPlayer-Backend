@@ -12,6 +12,7 @@ fun Application.videosRouting() {
             getVideoById()
             putLastWatched()
             softDeleteVideoById()
+            restoreVideoById()
         }
     }
 }
