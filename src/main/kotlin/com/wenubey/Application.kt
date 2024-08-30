@@ -15,5 +15,5 @@ fun Application.module() {
 
     configureMonitoring()
     configureSerialization()
-    configureRouting()
+    videosRouting()
 }
