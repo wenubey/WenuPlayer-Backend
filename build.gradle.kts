@@ -32,12 +32,10 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-    implementation("io.ktor:ktor-server-multipart")
+
 
     // KMongo
     implementation("org.litote.kmongo:kmongo:$kmongoVersion")
-    implementation("org.litote.kmongo:kmongo-async:$kmongoVersion")
-    implementation("org.litote.kmongo:kmongo-coroutine:$kmongoVersion")
 
     // SLF4J
     implementation("org.slf4j:slf4j-api:2.0.0")

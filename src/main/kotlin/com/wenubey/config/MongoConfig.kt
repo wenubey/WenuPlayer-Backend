@@ -2,13 +2,12 @@ package com.wenubey.config
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
+import com.mongodb.client.gridfs.GridFSBucket
+import com.mongodb.client.gridfs.GridFSBuckets
 import com.mongodb.client.model.Indexes
 import com.wenubey.model.Video
 import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
+import org.litote.kmongo.KMongo
 import org.slf4j.LoggerFactory
 
 object MongoConfig {
@@ -23,21 +22,23 @@ object MongoConfig {
         .retryWrites(true)
         .build()
 
-    private val client = KMongo.createClient(settings).coroutine
-    val database: CoroutineDatabase = client.getDatabase(DB_NAME)
+    private val client = KMongo.createClient(settings)
+    val database = client.getDatabase(DB_NAME)
 
-    private val videoCollection: CoroutineCollection<Video> = database.getCollection(COLLECTION_NAME)
+    private val videoCollection = database.getCollection(COLLECTION_NAME, Video::class.java)
+    val gridFSBucket: GridFSBucket = GridFSBuckets.create(database, COLLECTION_NAME)
 
-
-    fun init() {
+    fun init() =
         runBlocking {
             createIndexes()
 
             checkConnection()
         }
-    }
 
-    private suspend fun createIndexes() {
+    fun videoCollection() = videoCollection
+    fun gridFSBucket() = gridFSBucket
+
+    private fun createIndexes() {
         try {
             videoCollection.createIndex(Indexes.ascending(TITLE_FIELD))
             logger.info("Indexes created successfully")
@@ -46,7 +47,7 @@ object MongoConfig {
         }
     }
 
-    private suspend fun checkConnection() {
+    private fun checkConnection() {
         try {
             val databases = client.listDatabaseNames()
             logger.info("Connected to MongoDB. Databases: $databases")
