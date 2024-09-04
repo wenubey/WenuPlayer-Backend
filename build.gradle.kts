@@ -2,6 +2,7 @@
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val kmongoVersion: String by project
+val koinVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -39,4 +40,9 @@ dependencies {
 
     // SLF4J
     implementation("org.slf4j:slf4j-api:2.0.0")
+
+    // Dependency Injection
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+
 }

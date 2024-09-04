@@ -2,10 +2,11 @@ package com.wenubey
 
 
 
-import com.wenubey.config.MongoConfig
+import com.wenubey.di.loggerModule
+import com.wenubey.di.mongoModule
+import com.wenubey.di.repositoryModule
 import com.wenubey.plugins.*
 import com.wenubey.repository.VideoRepository
-import com.wenubey.repository.VideoRepositoryImpl
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.CoroutineScope
@@ -14,8 +15,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.koin.core.context.startKoin
+import org.koin.ktor.ext.inject
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
@@ -23,11 +25,12 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    MongoConfig.init()
-    val videoCollection = MongoConfig.videoCollection()
-    val gridFSBucket = MongoConfig.gridFSBucket()
-    val logger = LoggerFactory.getLogger(Application::class.java)
-    val videoRepository = VideoRepositoryImpl(videoCollection, gridFSBucket)
+
+    startKoin {
+        modules(loggerModule(), mongoModule(), repositoryModule())
+    }
+    val logger by inject<Logger>()
+    val videoRepository by inject<VideoRepository>()
 
     configureMonitoring()
     configureSerialization()
