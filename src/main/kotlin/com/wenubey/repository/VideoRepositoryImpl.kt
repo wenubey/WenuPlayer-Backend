@@ -54,7 +54,15 @@ class VideoRepositoryImpl(private val videoCollection: MongoCollection<Video>, p
 
     override suspend fun permanentlyDeleteOldVideos(): Int = safeRun(logger) {
         videoCollection.find(Video::deletedAt lt SIX_HOURS_AGO).toList().forEach { video ->
-            gridFSBucket.delete(ObjectId(video.id))
+            try {
+                if (video.id.length == 24) {  // Check if the ID is 24 characters long
+                    gridFSBucket.delete(ObjectId(video.id))
+                } else {
+                    logger.warn("Skipping invalid ObjectId: ${video.id}")
+                }
+            } catch (e: Exception) {
+                logger.error("Error deleting video with ID ${video.id}: ${e.localizedMessage}", e)
+            }
         }
         val deleteResult = videoCollection.deleteMany(
             Video::deletedAt lt SIX_HOURS_AGO
