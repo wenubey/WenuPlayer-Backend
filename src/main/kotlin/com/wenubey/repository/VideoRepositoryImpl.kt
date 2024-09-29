@@ -20,8 +20,9 @@ class VideoRepositoryImpl(private val videoCollection: MongoCollection<Video>, p
 
     override suspend fun uploadVideo(video: Video, fileStream: InputStream): Boolean =
         safeRun(logger = logger) {
-            gridFSBucket.uploadFromStream(video.id, fileStream)
-            videoCollection.insertOne(video).wasAcknowledged()
+            val fileObjectId = gridFSBucket.uploadFromStream(video.id, fileStream)
+            val videoWithFileId = video.copy(fileObjectId = fileObjectId.toString())
+            videoCollection.insertOne(videoWithFileId).wasAcknowledged()
         } == true
 
     override suspend fun getVideoById(id: String): VideoStream? = safeRun(logger) {
@@ -55,11 +56,7 @@ class VideoRepositoryImpl(private val videoCollection: MongoCollection<Video>, p
     override suspend fun permanentlyDeleteOldVideos(): Int = safeRun(logger) {
         videoCollection.find(Video::deletedAt lt SIX_HOURS_AGO).toList().forEach { video ->
             try {
-                if (video.id.length == 24) {  // Check if the ID is 24 characters long
-                    gridFSBucket.delete(ObjectId(video.id))
-                } else {
-                    logger.warn("Skipping invalid ObjectId: ${video.id}")
-                }
+                gridFSBucket.delete(ObjectId(video.fileObjectId))
             } catch (e: Exception) {
                 logger.error("Error deleting video with ID ${video.id}: ${e.localizedMessage}", e)
             }

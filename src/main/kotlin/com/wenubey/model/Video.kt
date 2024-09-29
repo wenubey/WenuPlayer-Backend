@@ -12,4 +12,5 @@ data class Video(
     val url: String,
     val lastWatched: Long,
     val deletedAt: Long? = null,
+    val fileObjectId: String? = null
 )
