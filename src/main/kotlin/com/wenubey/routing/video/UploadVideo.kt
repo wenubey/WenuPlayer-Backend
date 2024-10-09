@@ -68,7 +68,7 @@ fun Route.postUploadVideo(videoRepository: VideoRepository, logger: Logger) {
         val video = Video(
             id = uuid,
             title = fileName,
-            url = "videos/$fileName",
+            url = fileName,
             lastWatched = 0L
         )
         val isUploaded =  withContext(Dispatchers.IO) {

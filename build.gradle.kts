@@ -40,6 +40,7 @@ dependencies {
 
     // SLF4J
     implementation("org.slf4j:slf4j-api:2.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.4")
 
     // Dependency Injection
     implementation("io.insert-koin:koin-core:$koinVersion")
